@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Profile - Markaz ERP</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: { 
+                    colors: { 
+                        'markaz-blue': '#155e9c', 
+                        'markaz-light': '#e8f0f8',
+                        'markaz-hover': '#114a7b'
+                    } 
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons & Alpine.js -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <style>
+        body, h1, h2, h3, h4, h5, h6, p, a, span, button, input, label { 
+            font-family: 'Cambria', Georgia, serif !important; 
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen relative overflow-x-hidden bg-[#f4f7fb]">
+    
+    <!-- Decorative Background Elements -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e1_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e1_1px,transparent_1px)] bg-[size:30px_30px] opacity-10"></div>
+        <div class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-400 rounded-full mix-blend-multiply filter blur-[120px] opacity-20"></div>
+    </div>
+    
+    <!-- Top Header -->
+    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200 px-8 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
+        <div class="flex items-center gap-5">
+            <a href="<?php echo e(route('dashboard')); ?>" class="p-2.5 bg-white border border-slate-200 hover:bg-markaz-light hover:text-markaz-blue hover:border-markaz-blue rounded-xl text-slate-500 shadow-sm transition-all hover:scale-105 group">
+                <i data-lucide="arrow-left" class="w-5 h-5 group-hover:-translate-x-1 transition-transform"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800 tracking-tight">User Profile & Settings</h1>
+                <p class="text-xs text-slate-500 font-medium">Manage your account credentials and personal details</p>
+            </div>
+        </div>
+        
+        <!-- Profile Dropdown -->
+        <div class="relative" x-data="{ profileOpen: false }">
+            <button @click="profileOpen = !profileOpen" class="flex items-center gap-3 focus:outline-none bg-white border border-slate-200 py-1.5 px-3 rounded-full hover:shadow-md transition-all">
+                <span class="text-sm font-bold text-slate-700 ml-2"><?php echo e(auth()->user()->name ?? 'Admin'); ?></span>
+                <div class="w-8 h-8 rounded-full bg-markaz-blue flex items-center justify-center text-white font-bold text-sm">
+                    <?php echo e(substr(auth()->user()->name ?? 'A', 0, 1)); ?>
+
+                </div>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+            </button>
+            <div x-show="profileOpen" @click.away="profileOpen = false" x-transition.opacity.duration.200ms class="absolute right-0 mt-3 w-48 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-50">
+                <a href="<?php echo e(route('profile')); ?>" class="flex items-center gap-2 px-4 py-2 text-sm text-markaz-blue bg-markaz-light font-semibold">My Profile</a>
+                <a href="<?php echo e(route('profile.edit')); ?>" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-markaz-light hover:text-markaz-blue">Reset Password</a>
+                <div class="border-t border-slate-100 mt-1 pt-1">
+                    <form method="POST" action="<?php echo e(route('logout')); ?>">
+                        <?php echo csrf_field(); ?>
+                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto p-6 lg:p-10">
+        
+        <!-- Profile Card Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Avatar & Summary -->
+            <div class="bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col items-center text-center h-fit">
+                <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-markaz-blue to-blue-400 flex items-center justify-center text-white font-bold text-3xl shadow-lg mb-4 ring-4 ring-blue-50">
+                    <?php echo e(substr($user->name ?? 'A', 0, 1)); ?>
+
+                </div>
+                <h3 class="text-xl font-bold text-slate-800"><?php echo e($user->name ?? 'Admin User'); ?></h3>
+                <p class="text-xs text-slate-400 mt-0.5 font-medium"><?php echo e($user->email ?? 'admin@markaz.in'); ?></p>
+                
+                <div class="w-full mt-6 pt-6 border-t border-slate-100 flex flex-col gap-2">
+                    <div class="flex justify-between text-xs text-slate-500 font-medium">
+                        <span>Role / Status:</span>
+                        <span class="text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">Active</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-500 font-medium">
+                        <span>Joined On:</span>
+                        <span class="text-slate-700 font-bold">
+                            <?php echo e(isset($user->created_at) ? \Carbon\Carbon::parse($user->created_at)->format('d M, Y') : 'N/A'); ?>
+
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Edit Profile & Password Form -->
+            <div class="md:col-span-2 bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+                
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+                    <div class="p-2 bg-blue-50 text-markaz-blue rounded-xl">
+                        <i data-lucide="user-cog" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Profile Information</h3>
+                        <p class="text-xs text-slate-500">Update your account's profile information and email address.</p>
+                    </div>
+                </div>
+
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(session('success')): ?>
+                    <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+                        <?php echo e(session('success')); ?>
+
+                    </div>
+                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+                <form action="<?php echo e(route('profile')); ?>" method="POST" class="space-y-5">
+                    <?php echo csrf_field(); ?>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">Full Name *</label>
+                        <input type="text" name="name" value="<?php echo e(old('name', $user->name ?? '')); ?>" required 
+                               class="w-full border border-slate-300 rounded-xl px-4 py-3 bg-white shadow-sm focus:ring-4 focus:ring-markaz-blue/20 focus:border-markaz-blue outline-none transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">Email Address *</label>
+                        <input type="email" name="email" value="<?php echo e(old('email', $user->email ?? '')); ?>" required 
+                               class="w-full border border-slate-300 rounded-xl px-4 py-3 bg-white shadow-sm focus:ring-4 focus:ring-markaz-blue/20 focus:border-markaz-blue outline-none transition-all">
+                    </div>
+
+                    <div class="pt-4 flex justify-end">
+                        <button type="submit" class="px-6 py-3 text-sm font-bold text-white bg-markaz-blue hover:bg-markaz-hover rounded-xl shadow-[0_4px_14px_0_rgba(21,94,156,0.39)] transition-all flex items-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html><?php /**PATH C:\Users\USERE\Desktop\laravel-app\markaz-erp\resources\views/pages/profile.blade.php ENDPATH**/ ?>
